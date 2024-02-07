@@ -6,9 +6,24 @@ export const useWeaterStore = defineStore(STORE_NAME, {
         city: 'Unknown',
         weather: {
             current: {
-                temperature_2m: 0,
+                temp_c: 0,
+                condition: {
+                    text: 'Unknown',
+                }
             },
-        },
+            forecast: {
+                forecastday: [{
+                    day: {
+                        avgtemp_c: 0,
+                        condition: {
+                            text: 'Unknown',
+                        },
+                        mintemp_c: 0,
+                        maxtemp_c: 0
+                    }
+                }]
+            }
+        }
 
     }),
     getters: {
