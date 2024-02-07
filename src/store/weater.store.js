@@ -12,9 +12,7 @@ export const useWeaterStore = defineStore(STORE_NAME, {
 
     }),
     getters: {
-        getCity() {
-            return this.city
-        }
+
     },
     actions: {
         setCity(city) {

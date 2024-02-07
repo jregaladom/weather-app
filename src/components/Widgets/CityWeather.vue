@@ -1,12 +1,22 @@
 <template>
     <div>
-        <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-white">
-            {{ city }}</h1>
-
+        <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-white" v-if="isCurrent">
+            Current Location
+        </h1>
+    </div>
+    <div>
+        <h1 class="mb-4 text-xl font-extrabold leading-none tracking-tight text-white">
+            {{ city }}
+        </h1>
     </div>
     <div>
         <h1 class="mb-4 text-6xl font-extrabold leading-none tracking-tight text-white">
             {{ currentTemperature }}</h1>
+    </div>
+    <div>
+        <h1 class="mb-4 text-sm font-medium leading-none tracking-tight text-white">
+            Maximum:{{ temperature_2m_max }}° Minimum:{{ temperature_2m_min }}°
+        </h1>
     </div>
 </template>
 <script setup>
@@ -17,15 +27,20 @@ import openMeteoService from '@services/open-meteo.service'
 import { useWeaterStore } from '@store/weater.store.js'
 import { computed, ref } from 'vue'
 
+const props = defineProps(['isCurrentLocation'])
+const isCurrentLocation = props.isCurrentLocation;
+console.log(isCurrentLocation)
+
 const canLoad = ref(true);
 // Obtiene el store de weather
 const weatherStore = useWeaterStore()
 
 // Obtiene el valor de city  del store
 const city = computed(() => weatherStore.city)
-
+const isCurrent = computed(() => isCurrentLocation)
 const currentTemperature = computed(() => `${weatherStore.weather.current.temperature_2m}°`)
-
+const temperature_2m_max = computed(() => weatherStore.weather.daily.temperature_2m_max[0])
+const temperature_2m_min = computed(() => weatherStore.weather.daily.temperature_2m_min[0])
 
 // Ejecuta la función cuando el componente se monta
 onMounted(async () => {
@@ -44,15 +59,11 @@ onMounted(async () => {
             weatherStore.setCity(response.address.city)
 
             openMeteoService.getForecastByLatLng(geolocation.coords).then(response => {
-                console.log(response)
                 weatherStore.setWeather(response)
-                //canLoad.value = false
+                console.log(response)
             }).catch(error => {
                 console.log(error)
-                //canLoad.value = false
             });
-
-
         }).catch(error => {
             console.log(error)
             canLoad.value = false
